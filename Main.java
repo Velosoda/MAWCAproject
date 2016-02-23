@@ -18,9 +18,6 @@ public class Main {
 	ArrayList<Soldier> reserveS = new ArrayList<Soldier>();
 	ArrayList<Esoldiers> reserveE = new ArrayList<Esoldiers>();
 	//basic idea on the survivors will uses these arraylists 
-	ArrayList<Soldier> survivors1 = new ArrayList<Soldier>();
-	ArrayList<Soldier> survivors2 = new ArrayList<Soldier>();
-	ArrayList<Soldier> survivors3 = new ArrayList<Soldier>();
 	GameRules rules = new GameRules();
 	Enemy enemy = new Enemy();
 	Player you = new Player();
@@ -88,19 +85,23 @@ public class Main {
 			System.out.print("Health: "+you.squad.get(i).health);
 			System.out.println();
 		}
-		//Algorithm for equipping Tier one Attack Boosts 
+		//Algorithm for equipping Tier one Attack Boosts and Health boosts
 		while(you.attackBoostBank!=0){
 			System.out.println("Attack Boosts remaining : "+you.attackBoostBank);
 			System.out.println("who do you want to give a boost to");
 			String choice;
 			choice=all.next();
-			for(int i=0; i<you.squad.size(); i++){
-				if(choice.equals(you.squad.get(i).name)){
+			System.out.println(choice);
+			for(int i=0; i!=you.squad.size(); i++){
+				if(choice.equals(you.squad.get(i).name) && you.squad.get(i).attack!=5){
 					you.squad.get(i).tier1AttackBoost+=1;
 					you.squad.get(i).attackBoost();
+					you.attackBoostBank-=1;
+					//System.out.println(i);
+					equip();
 				}
-				else{
-					System.out.println("That person does not exist or already has a Tier 1 Attack Boost");
+				else{ 
+					System.out.println("That person either doesn't exsist or already has a tier 1 Attack boost");
 					equip();
 				}
 			}
@@ -108,15 +109,19 @@ public class Main {
 		while(you.healthBoostBank!=0){
 			System.out.println("Health Boosts remaining : "+you.healthBoostBank);
 			System.out.println("who do you want to give a boost to");
-			int choice=all.nextInt();
-			for(int i=0; i<you.squad.size(); i++){
-				if(choice==you.squad.get(i).id){
+			String choice;
+			choice=all.next();
+			System.out.println(choice);
+			for(int i=0; i!=you.squad.size(); i++){
+				if(choice.equals(you.squad.get(i).name) && you.squad.get(i).health!=7){
 					you.squad.get(i).tier1HealthBoost+=1;
 					you.squad.get(i).healthBoost();
+					you.healthBoostBank-=1;
+					//System.out.println(i);
+					equip();
 				}
 				else{
-					System.out.println("that person does not exist");
-					equip();
+					System.out.println("That person either doesn't exsist or already has a health boost");
 				}
 			}
 		}
@@ -228,18 +233,6 @@ public class Main {
 			return;
 		}
 	}
-	/*working Might not actually need this 
-	*public void reserveBattle(ArrayList<Soldier> Sarray, ArrayList<Esoldiers> Earray){
-	*	int i=0;
-	*	//this is for the case of the enemy having a reserve array that is full
-	*	if(Earray.isEmpty() && reserveE.size()>0){
-	*		while(i<reserveE.size()){
-	*			Sarray.get(i).health-=reserveE.get(i).attack;
-	*			reserveE.get(i).health-=Sarray.get(i).attack;
-	*		}
-	*	}
-	*}
-	*/
 	//working Actual battle phase
 	public void survivors(ArrayList<Soldier> Sarray, ArrayList<Esoldiers> Earray){
 		
@@ -273,13 +266,6 @@ public class Main {
 			}
 		}
 		battle(Sarray,Earray);		
-		
-		/*reserves battling survivors here might have to make this its own method 
-		 *if(Sarray.size()>Earray.size() && reserveE.size()>0 || Earray.size()>Sarray.size() && reserveS.size()>0){
-		 *	reserveBattle(Sarray,Earray);
-		 *}
-		 */
-		
 		//Defeated the base
 		if(Earray.size()==0){
 			System.out.println("you defeated this base");
@@ -336,9 +322,15 @@ public class Main {
 		battle(selectionsB1, base1);
 		battle(selectionsB2, base2);
 		battle(selectionsB3, base3);
-		//you still have survivors in the selections and there are still enemys out there
-		//suggested solution is to put them in one array each then do the battle again 
-		//other solution is to distribute the guys to the desired base 
+		
+		//------------------------------------------------------------------------------
+		//						-Survivor Handling Section-
+		//This section of the Battle method handles any survivors that the player may have
+		//Its key to understand that this is only necessary if there are enemies still alive in the other bases 
+		//The Accepted solution is to distribute the guys to the separate bases
+		//------------------------------------------------------------------------------
+		
+
 		if(selectionsB1.size()+selectionsB2.size()+selectionsB3.size()>0 && base1.size()+base2.size()+base3.size()>0){
 			//this loop will place all of your survivors into a single array
 			for(int i=0; selectionsB2.size()+selectionsB3.size()>0; i++){
@@ -371,23 +363,12 @@ public class Main {
 		if(selectionsB1.size()+selectionsB2.size()+selectionsB3.size()==0){
 			
 		}
-		
-		
-		/*
-		*  reserve(selectionsB1, base1);
-		*  reserve(selectionsB2, base2);
-		*  reserve(selectionsB3, base3);
-		*/
-		
 	}
 	public void startup(){
 		System.out.println("Welcome to what ever Im going to call this");
 		System.out.println("This is game about strategy and base invading");
 		System.out.println("What is the name of Your Team");
 		System.out.println(enemy.r);
-		//System.out.println(enemy.base1Fill);
-		//System.out.println(enemy.base2Fill);
-		//System.out.println(enemy.base3Fill);
 		you.name=all.next();
 		menu();
 		all.close();
