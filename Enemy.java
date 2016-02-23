@@ -12,7 +12,6 @@ public class Enemy {
 	
 	Enemy(){}		
 		
-	//this constructor creates an enemy and fills the bases with random amount of enemy soldiers
 	//might be better to make this into a method so we dont have to create more enemys
 	public void enemyBaseFill(ArrayList<Esoldiers> base1, ArrayList<Esoldiers> base2, ArrayList<Esoldiers> base3){
 		int base1Fill=3;
