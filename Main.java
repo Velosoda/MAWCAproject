@@ -1,11 +1,10 @@
 /* Author: David Veloso 
  * Concept: David Veloso & Matt Jacobi
- * Date Started: Nov 2015
+ * Date Started: January 2016
  * Date Finished: March 2016
  * Tested: NO
  */
 package game;
-
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -81,24 +80,22 @@ public class Main {
 		else{System.out.println("you have no more funds ");}
 	}
 	public void equip(){
-		//Lets the player choose names for their soldiers
-		for(int i=0; i <= you.squad.size()-1; i++){
-			System.out.println("What is Member "+(i+1)+"'s name?");
-			you.squad.get(i).name=all.next();
-		}
 		//displays the soldier's id  name <-- just like that not entirely sure why though 
 		for(int i=0; i<you.squad.size(); i++){
 			System.out.print(you.squad.get(i).id);
 			System.out.print(" "+you.squad.get(i).name);
+			System.out.print("Attack: "+you.squad.get(i).attack);
+			System.out.print("Health: "+you.squad.get(i).health);
 			System.out.println();
 		}
 		//Algorithm for equipping Tier one Attack Boosts 
 		while(you.attackBoostBank!=0){
 			System.out.println("Attack Boosts remaining : "+you.attackBoostBank);
 			System.out.println("who do you want to give a boost to");
-			int choice=all.nextInt();
+			String choice;
+			choice=all.next();
 			for(int i=0; i<you.squad.size(); i++){
-				if(choice==you.squad.get(i).id && you.squad.get(i).tier1AttackBoost==0){
+				if(choice.equals(you.squad.get(i).name)){
 					you.squad.get(i).tier1AttackBoost+=1;
 					you.squad.get(i).attackBoost();
 				}
@@ -175,13 +172,17 @@ public class Main {
 		}
 		else{return;}
 	}
-	public void selections(ArrayList<Soldier> selections){
+	public void selections(ArrayList<Soldier> selections, int survivors){
 		//shows your remaining squad in detail
-		for(int i=0; i<you.squad.size(); i++){
-			System.out.print(" "+you.squad.get(i).name+" ");
-			System.out.print(you.squad.get(i).id);
-			System.out.print(" "+you.squad.get(i).attack+" ");
-			System.out.print(" "+you.squad.get(i).health+"  ");
+		if(survivors==0){
+			for(int i=0; i<you.squad.size(); i++){
+				System.out.print(" "+you.squad.get(i).name+" ");
+				System.out.print(you.squad.get(i).id);
+				System.out.print(" "+you.squad.get(i).attack+" ");
+				System.out.print(" "+you.squad.get(i).health+"  ");
+			}
+		}
+		if(survivors==1){
 		}
 		System.out.println("Enter the ids(Enter 0 when you are done)");
 		int choice=all.nextInt();
@@ -193,7 +194,7 @@ public class Main {
 			if(choice==0 && selections.size()>=1){
 				done=true;
 			}
-			else{selections(selections);}
+			else{selections(selections,0);}
 		}
 		if(done=true)return;
 	}
@@ -240,7 +241,10 @@ public class Main {
 	*}
 	*/
 	//working Actual battle phase
-	public void battle(ArrayList<Soldier> Sarray, ArrayList<Esoldiers> Earray, ArrayList<Soldier> survivors){
+	public void survivors(ArrayList<Soldier> Sarray, ArrayList<Esoldiers> Earray){
+		
+	}
+	public void battle(ArrayList<Soldier> Sarray, ArrayList<Esoldiers> Earray){
 		int i=0;
 		int x=0;
 		//these ifs make it so the while loop below will run the max amount of times 
@@ -268,7 +272,7 @@ public class Main {
 				i++;
 			}
 		}
-		battle(Sarray,Earray,survivors);		
+		battle(Sarray,Earray);		
 		
 		/*reserves battling survivors here might have to make this its own method 
 		 *if(Sarray.size()>Earray.size() && reserveE.size()>0 || Earray.size()>Sarray.size() && reserveS.size()>0){
@@ -283,8 +287,6 @@ public class Main {
 			//loop will display any survivors of this base
 			for(int i1=0; i1<Sarray.size(); i1++){
 				System.out.println(Sarray.get(i1).name+" survived");
-				survivors.add(Sarray.get(i1));
-				Sarray.remove(i1);
 			}
 			//win the round 
 			if(you.basesDefeated==3){
@@ -297,10 +299,10 @@ public class Main {
 		if(Sarray.size()==0){
 			System.out.println("All of your soldiers died");
 			System.out.println("There are "+Earray.size()+ "people left in this base");
-			
+			return;
 		}	
 	}
-	//working prepares the player for battle; serves as a main method for the battle 
+	//working prepares the player for battle; serves as a main method for the battle; This will only work out one round 
 	public void battleSetup(){
 		rules.winCheck();
 		rules.currentRound+=1;
@@ -308,34 +310,73 @@ public class Main {
 		ArrayList<Soldier> selectionsB2 = new ArrayList<Soldier>();
 		ArrayList<Soldier> selectionsB3 = new ArrayList<Soldier>();
 		enemy.enemyBaseFill(base1, base2, base3);
+		System.out.println("Round "+rules.currentRound);
 		System.out.println("The Enemy controls 3 bases we have to get in there and clear them all out");
 		store();
+		//Lets the player choose names for their soldiers (needs to go somewhere else)
+		for(int i=0; i <= you.squad.size()-1; i++){
+			System.out.println("What is Member "+(i+1)+"'s name?");
+			you.squad.get(i).name=all.next();
+		}
 		equip();
 		System.out.println("Heres how many people are in each base");
-		for(int i=0; i<base1.size(); i++){
-			System.out.println("Base 1: "+base1.size());
-			System.out.println("Base 3: "+base3.size());
-			System.out.println("Base 2: "+base2.size());
-		}
+		System.out.println("Base 1: "+base1.size());
+		System.out.println("Base 3: "+base3.size());
+		System.out.println("Base 2: "+base2.size());
 		System.out.println("Now we need to choose who goes to which base you need at least one person per base");
 		//selection section
 		System.out.println("Who would you like to send to base 1");
-		selections(selectionsB1);
+		selections(selectionsB1,0);
 		System.out.println("Who would you like to send to base 2");
-		selections(selectionsB2);
+		selections(selectionsB2,0);
 		System.out.println("Who would you like to send to base 3");
-		selections(selectionsB3);
+		selections(selectionsB3,0);
 		//Battle Section
 		System.out.println("There is no going back now ");
-		battle(selectionsB1, base1, survivors1);
-		battle(selectionsB2, base2, survivors2);
-		battle(selectionsB3, base3, survivors3);
+		battle(selectionsB1, base1);
+		battle(selectionsB2, base2);
+		battle(selectionsB3, base3);
+		//you still have survivors in the selections and there are still enemys out there
+		//suggested solution is to put them in one array each then do the battle again 
+		//other solution is to distribute the guys to the desired base 
+		if(selectionsB1.size()+selectionsB2.size()+selectionsB3.size()>0 && base1.size()+base2.size()+base3.size()>0){
+			//this loop will place all of your survivors into a single array
+			for(int i=0; selectionsB2.size()+selectionsB3.size()>0; i++){
+				selectionsB1.add(selectionsB2.get(i));
+				selectionsB2.remove(i);
+				selectionsB1.add(selectionsB3.get(i));
+				selectionsB3.remove(i);
+			}
+			System.out.println("you have survivors and there are still people left in the bases. Where would you like you survivors to go");
+			System.out.println("Heres how many people are left");
+			System.out.println("Base 1: "+base1.size());
+			System.out.println("Base 3: "+base3.size());
+			System.out.println("Base 2: "+base2.size());
+			System.out.println("Here are your Survivors");
+			//displays survivors
+			for(int i=0; selectionsB1.size()<0; i++){
+				System.out.println(selectionsB1.get(i).name);
+			}
+			if(base1.size()!=0){
+				System.out.println("Who do you want to send to base 1");
+			}
+			if(base2.size()!=0){
+				System.out.println("who do you want to send to base 2");
+			}
+			if(base3.size()!=0){
+				System.out.println("Who do you want to send to base 3");
+			}
+		}
+		//cpu wins
+		if(selectionsB1.size()+selectionsB2.size()+selectionsB3.size()==0){
+			
+		}
 		
-		battleSetup();
 		
-		/* reserve(selectionsB1, base1);
-		* reserve(selectionsB2, base2);
-		* reserve(selectionsB3, base3);
+		/*
+		*  reserve(selectionsB1, base1);
+		*  reserve(selectionsB2, base2);
+		*  reserve(selectionsB3, base3);
 		*/
 		
 	}
@@ -343,6 +384,10 @@ public class Main {
 		System.out.println("Welcome to what ever Im going to call this");
 		System.out.println("This is game about strategy and base invading");
 		System.out.println("What is the name of Your Team");
+		System.out.println(enemy.r);
+		//System.out.println(enemy.base1Fill);
+		//System.out.println(enemy.base2Fill);
+		//System.out.println(enemy.base3Fill);
 		you.name=all.next();
 		menu();
 		all.close();
