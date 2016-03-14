@@ -24,7 +24,7 @@ public class Main {
 	boolean done=false;
 	
 	public void menu(){
-		System.out.println("Welcome To what ever we call it "+ you.name);
+		System.out.println("Welcome To whatever we call it "+ you.name);
 		System.out.println("x: Player VS Cpu"); 
 		if(all.nextInt()==1){
 			battleSetup();
@@ -35,7 +35,7 @@ public class Main {
 	}
 	public void store(){
 		if(you.funds>49){
-			System.out.println("Funds Remaining =  "+you.funds);
+			System.out.println("Funds Remaining = "+you.funds);
 			System.out.println("(1)Personel           : 100");
 			System.out.println("---------Tier 1----------");
 			System.out.println("(2)Attack Boosts (+2) : 75");	
