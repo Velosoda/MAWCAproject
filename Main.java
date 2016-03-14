@@ -24,7 +24,7 @@ public class Main {
 	boolean done=false;
 	
 	public void menu(){
-		System.out.println("Welcome To what ever we call it "+ you.name);
+		System.out.println("Welcome To whatever we call it"+ you.name);
 		System.out.println("x: Player VS Cpu"); 
 		if(all.nextInt()==1){
 			battleSetup();
