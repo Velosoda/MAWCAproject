@@ -28,7 +28,7 @@ public class Soldier {
 	}
 	//Applies the Tier one Attack Boost
 	public void attackBoost(){
-		for(int i=0; i<tier1AttackBoost;i++){
+		if(tier1AttackBoost==1){
 			attack+=2;
 		}
 	}
