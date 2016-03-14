@@ -24,7 +24,7 @@ public class Main {
 	boolean done=false;
 	
 	public void menu(){
-		System.out.println("Welcome To what ever we call it"+ you.name);
+		System.out.println("Welcome To what ever we call it "+ you.name);
 		System.out.println("x: Player VS Cpu"); 
 		if(all.nextInt()==1){
 			battleSetup();
@@ -76,106 +76,158 @@ public class Main {
 		}
 		else{System.out.println("you have no more funds ");}
 	}
-	public void equip(){
+	public void equipDisplay(){
 		//displays the soldier's id  name <-- just like that not entirely sure why though 
 		for(int i=0; i<you.squad.size(); i++){
 			System.out.print(you.squad.get(i).id);
-			System.out.print(" "+you.squad.get(i).name);
-			System.out.print("Attack: "+you.squad.get(i).attack);
+			System.out.print(" "+you.squad.get(i).name+" ");
+			System.out.print("Attack: "+you.squad.get(i).attack+" ");
 			System.out.print("Health: "+you.squad.get(i).health);
 			System.out.println();
 		}
+	}
+	public void tierCheckDisplay(){
+		//tier 2 attack boost check and equip; will only run if the player actually has 
+		for(int i=0; i!=you.squad.size(); i++){
+			you.squad.get(i).tierCheck();
+			if(you.squad.get(i).attackTier==true){
+				System.out.println(you.squad.get(i).name+" is eligible for an Attack Upgrade");
+			}
+			if(you.squad.get(i).healthTier==true){
+				System.out.println(you.squad.get(i).name+" is eligible for an Health Upgrade");
+			}
+			if(you.squad.get(i).attackTier==true && you.squad.get(i).healthTier==true){
+				System.out.println(you.squad.get(i).name+" is eligible for both Upgrades");
+			}
+			System.out.println();
+		}
+	}
+	public void equip(){
 		//Algorithm for equipping Tier one Attack Boosts and Health boosts
+		attackloop:	
 		while(you.attackBoostBank!=0){
+			String choice;
+			int errorCount=0;
+			int getOutOfAttack=0;
+			equipDisplay();
 			System.out.println("Attack Boosts remaining : "+you.attackBoostBank);
 			System.out.println("who do you want to give a boost to");
-			String choice;
 			choice=all.next();
-			System.out.println(choice);
 			for(int i=0; i!=you.squad.size(); i++){
 				if(choice.equals(you.squad.get(i).name) && you.squad.get(i).attack!=5){
 					you.squad.get(i).tier1AttackBoost+=1;
 					you.squad.get(i).attackBoost();
 					you.attackBoostBank-=1;
-					//System.out.println(i);
-					equip();
 				}
 				else{ 
-					System.out.println("That person either doesn't exsist or already has a tier 1 Attack boost");
-					equip();
+					errorCount++;
+					if(errorCount==4){
+						System.out.println("That person either doesn't exsist or already has a tier 1 Attack boost");
+					}
+				}
+			}
+			//this will get us out of the attack loop and go to the health loop
+			for(int i=0; i<you.squad.size(); i++){
+				if(you.squad.get(i).attack==5){
+					getOutOfAttack++;
+					if(getOutOfAttack==you.squad.size()){
+						break attackloop;
+					}
+				}
+				else{ 
+					continue attackloop;
 				}
 			}
 		}
+		healthloop:
 		while(you.healthBoostBank!=0){
+			String healthBoostSelection;
+			int healthErrorCount=0;
+			equipDisplay();
 			System.out.println("Health Boosts remaining : "+you.healthBoostBank);
-			System.out.println("who do you want to give a boost to");
-			String choice;
-			choice=all.next();
-			System.out.println(choice);
+			System.out.println("Who do you want to give a boost to");
+			healthBoostSelection=all.next();
 			for(int i=0; i!=you.squad.size(); i++){
-				if(choice.equals(you.squad.get(i).name) && you.squad.get(i).health!=7){
+				if(healthBoostSelection.equals(you.squad.get(i).name) && you.squad.get(i).health!=7){
 					you.squad.get(i).tier1HealthBoost+=1;
 					you.squad.get(i).healthBoost();
 					you.healthBoostBank-=1;
-					//System.out.println(i);
-					equip();
 				}
-				else{
-					System.out.println("That person either doesn't exsist or already has a health boost");
+				else{ 
+					healthErrorCount++;
+					if(healthErrorCount==4){
+						System.out.println("That person either doesn't exsist or already has a tier 1 Health boost");
+					}
+				}
+			}
+			int getOutOfHealth=0;
+			for(int i=0; i<you.squad.size(); i++){
+				if(you.squad.get(i).attackTier==true){
+					getOutOfHealth++;
+					if(getOutOfHealth==you.squad.size()){
+						break healthloop;
+					}
+					else{
+						continue healthloop;
+					}
 				}
 			}
 		}
-		//tier two check + equip
-		System.out.println("Looking for soldiers that can equip tier 2 items...");
-		for(int i=0; i<you.squad.size(); i++){
-			you.squad.get(i).tierCheck();
-			if(you.squad.get(i).attackTier==true || you.squad.get(i).healthTier==true){
-				System.out.println("The following people are Eligble for tier 2 equipment");
-				System.out.println(you.squad.get(i).name);
-				System.out.println();
-			}		
-			else {
-				System.out.println("None of your soldiers are eligable for tier two upgrades");
-				return;
-			}
-		}
-		if(you.tier2AttackBoostBank!=1 || you.tier2HealthBoostBank!=1){
-			System.out.println("Would you like to like to equip your tier 2 items?(Yes or No");
-			String choice=all.next();
-			if(choice.equals("Yes")){
+		
+		if(you.tier2AttackBoostBank!=0 || you.tier2HealthBoostBank!=0){
+			tierCheckDisplay();
+			System.out.println("Would you like to give them the upgrade now? (yes or no)");
+			String upgradeChoice;
+			upgradeChoice=all.nextLine();
+			if(upgradeChoice.equals("yes")){
 				while(you.tier2AttackBoostBank!=0){
+					int tier2errorCount=0;
+					equipDisplay();
 					System.out.println("Tier 2 Attack Boosts remaining : "+you.tier2AttackBoostBank);
-					System.out.println("who do you want to give a boost to(enter the id)");
-					int boostChoice=all.nextInt();
-					int index=0;
-					if(boostChoice==you.squad.get(index).id){
-						you.squad.get(index).tier1HealthBoost+=1;
-						you.squad.get(index).healthBoost();
-						index+=1;
+					System.out.println("Who do you want to give a boost to (Enter the name) ");
+					String boostChoice=all.nextLine();
+					for(int i=0; i!=you.squad.size(); i++){
+						if(boostChoice.equals(you.squad.get(i).name) && you.squad.get(i).attack==5){
+							you.squad.get(i).tier2AttackBoost+=1;
+							you.squad.get(i).attackBoostTier2();
+							you.tier2AttackBoostBank-=1;
 						}
-						else{
-							System.out.println("that person does not exist");
-							equip();
+						else{ 
+							tier2errorCount++;
+							if(tier2errorCount==4){
+								System.out.println("That person either doesn't exsist or already has a Tier 2 Attack Boost");
+							}
 						}
 					}
+				}
 				while(you.tier2HealthBoostBank!=0){
-					System.out.println("Tier 2 Attack Boosts remaining : "+you.tier2HealthBoostBank);
-					System.out.println("who do you want to give a boost to");
-					int boostChoice=all.nextInt();
-					for(int i=0; i<you.squad.size(); i++){
-						if(boostChoice==you.squad.get(i).id){
-							you.squad.get(i).tier1HealthBoost+=1;
-							you.squad.get(i).healthBoost();
+					int tier2HealthErrorCount=0;
+					equipDisplay();
+					System.out.println("Tier 2 Health Boosts remaining : "+you.tier2HealthBoostBank);
+					System.out.println("Who do you want to give a boost to (Enter the name) ");
+					String boostChoice=all.nextLine();
+					for(int i=0; i!=you.squad.size(); i++){
+						if(boostChoice.equals(you.squad.get(i).name) && you.squad.get(i).health==7){
+							you.squad.get(i).tier2HealthBoost+=1;
+							you.squad.get(i).healthBoostTier2();
+							you.tier2HealthBoostBank-=1;
 						}
 						else{
-							System.out.println("that person does not exist");
-							equip();
+							tier2HealthErrorCount++;
+							if(tier2HealthErrorCount==4){
+								System.out.println("That person either doesn't exsist or already has a tier 2 health boost");
+							}
 						}
 					}
 				}
 			}
+			else if(upgradeChoice.equals("no")){
+				return;  
+			}
+			else{
+				System.out.println("Invalid Input. Try again");
+			}
 		}
-		else{return;}
 	}
 	public void selections(ArrayList<Soldier> selections, int survivors){
 		//shows your remaining squad in detail
@@ -299,12 +351,13 @@ public class Main {
 		System.out.println("Round "+rules.currentRound);
 		System.out.println("The Enemy controls 3 bases we have to get in there and clear them all out");
 		store();
-		//Lets the player choose names for their soldiers (needs to go somewhere else)
+		//Lets the player choose names for their soldiers (needs to go somewhere else)		
 		for(int i=0; i <= you.squad.size()-1; i++){
 			System.out.println("What is Member "+(i+1)+"'s name?");
 			you.squad.get(i).name=all.next();
 		}
 		equip();
+		//Displays how many enemies are in each base 
 		System.out.println("Heres how many people are in each base");
 		System.out.println("Base 1: "+base1.size());
 		System.out.println("Base 3: "+base3.size());
@@ -323,14 +376,13 @@ public class Main {
 		battle(selectionsB2, base2);
 		battle(selectionsB3, base3);
 		
-		//------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------------------
 		//						-Survivor Handling Section-
 		//This section of the Battle method handles any survivors that the player may have
 		//Its key to understand that this is only necessary if there are enemies still alive in the other bases 
 		//The Accepted solution is to distribute the guys to the separate bases
-		//------------------------------------------------------------------------------
+		//-----------------------------------------------------------------------------------------------------
 		
-
 		if(selectionsB1.size()+selectionsB2.size()+selectionsB3.size()>0 && base1.size()+base2.size()+base3.size()>0){
 			//this loop will place all of your survivors into a single array
 			for(int i=0; selectionsB2.size()+selectionsB3.size()>0; i++){
@@ -368,8 +420,7 @@ public class Main {
 		System.out.println("Welcome to what ever Im going to call this");
 		System.out.println("This is game about strategy and base invading");
 		System.out.println("What is the name of Your Team");
-		System.out.println(enemy.r);
-		you.name=all.next();
+		you.name=all.nextLine();
 		menu();
 		all.close();
 	}
