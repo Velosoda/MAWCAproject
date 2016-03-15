@@ -34,17 +34,17 @@ public class Soldier {
 	}
 	//Applies the Tier one Health Boost 
 	public void healthBoost(){
-		for(int i=0; i<tier1HealthBoost;i++){
+		if(tier1HealthBoost==1){
 			health+=2;
 		}
 	}
 	public void attackBoostTier2(){
-		for(int i=0; i<tier2AttackBoost;i++){
+		if(tier2AttackBoost==1){
 			attack+=1;
 		}
 	}
 	public void healthBoostTier2(){
-		for(int i=0; i<tier2HealthBoost;i++){
+		if(tier2HealthBoost==1){
 			health+=1;
 		}
 	}
