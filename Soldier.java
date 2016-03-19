@@ -18,6 +18,36 @@ public class Soldier {
 	boolean healthTier=false;
 	
 	//changes the two booleans above to true proving that the soldier can equip tier two Equipment
+	public void addItem(int trigger){
+		if(trigger==1){
+			tier1AttackBoost++;
+		}
+		if(trigger==2){
+			tier1HealthBoost++;
+		}
+		if(trigger==3){
+			tier2AttackBoost++;
+		}
+		if(trigger==4){
+			tier2HealthBoost++;
+		}
+	}
+	
+	public void applyItem(int trigger){
+		if(trigger==1){
+			attack+=2;
+		}
+		if(trigger==2){
+			health+=2;
+		}
+		if(trigger==3){
+			attack++;
+		}
+		if(trigger==4){
+			health++;
+		}
+	}
+	
 	public void tierCheck(){
 		if(tier1AttackBoost==1){
 			attackTier=true;
@@ -25,28 +55,5 @@ public class Soldier {
 		if(tier1HealthBoost==1){
 			healthTier=true;
 		}
-	}
-	//Applies the Tier one Attack Boost
-	public void attackBoost(){
-		if(tier1AttackBoost==1){
-			attack+=2;
-		}
-	}
-	//Applies the Tier one Health Boost 
-	public void healthBoost(){
-		if(tier1HealthBoost==1){
-			health+=2;
-		}
-	}
-	public void attackBoostTier2(){
-		if(tier2AttackBoost==1){
-			attack+=1;
-		}
-	}
-	public void healthBoostTier2(){
-		if(tier2HealthBoost==1){
-			health+=1;
-		}
-	}
+	}	
 }
-
